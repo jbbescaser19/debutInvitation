@@ -16,16 +16,505 @@
   padding: 0;
   box-sizing: border-box;
 }
-
 html {
   scroll-behavior: smooth;
 }
-
 body {
   background: var(--burgundy-dark);
   color: var(--cream);
   font-family: "Raleway", sans-serif;
   overflow-x: hidden;
+}
+
+/* ===================== ENVELOPE SCREEN ===================== */
+#envelope-screen {
+  position: fixed;
+  inset: 0;
+  z-index: 10000;
+  background: radial-gradient(
+    ellipse 120% 120% at 50% 60%,
+    #3d0a14 0%,
+    var(--burgundy-dark) 60%,
+    #1a0508 100%
+  );
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  transition:
+    opacity 1.2s ease,
+    visibility 1.2s ease;
+}
+#envelope-screen.fade-out {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+
+/* Background damask pattern */
+.env-bg-pattern {
+  position: absolute;
+  inset: 0;
+  opacity: 0.055;
+  background-image:
+    repeating-linear-gradient(
+      45deg,
+      var(--gold) 0px,
+      var(--gold) 1px,
+      transparent 1px,
+      transparent 30px
+    ),
+    repeating-linear-gradient(
+      -45deg,
+      var(--gold) 0px,
+      var(--gold) 1px,
+      transparent 1px,
+      transparent 30px
+    );
+  background-size: 42px 42px;
+  animation: patternShimmer 5s ease-in-out infinite alternate;
+}
+
+/* Floating particles */
+.env-particles {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+.env-particle {
+  position: absolute;
+  border-radius: 50%;
+  background: var(--gold-light);
+  animation: floatParticle var(--fdur, 6s) ease-in-out var(--fdelay, 0s)
+    infinite;
+  opacity: 0;
+}
+@keyframes floatParticle {
+  0% {
+    transform: translateY(0) scale(1);
+    opacity: 0;
+  }
+  20% {
+    opacity: 0.6;
+  }
+  80% {
+    opacity: 0.4;
+  }
+  100% {
+    transform: translateY(-80px) scale(0.5);
+    opacity: 0;
+  }
+}
+
+/* Corner ornaments */
+.env-corner {
+  position: absolute;
+  width: 70px;
+  height: 70px;
+  border-color: var(--gold);
+  border-style: solid;
+  opacity: 0.35;
+  animation: cornerPulse 3s ease-in-out infinite alternate;
+}
+.env-corner.tl {
+  top: 24px;
+  left: 24px;
+  border-width: 2px 0 0 2px;
+}
+.env-corner.tr {
+  top: 24px;
+  right: 24px;
+  border-width: 2px 2px 0 0;
+}
+.env-corner.bl {
+  bottom: 24px;
+  left: 24px;
+  border-width: 0 0 2px 2px;
+}
+.env-corner.br {
+  bottom: 24px;
+  right: 24px;
+  border-width: 0 2px 2px 0;
+}
+@keyframes cornerPulse {
+  from {
+    opacity: 0.25;
+  }
+  to {
+    opacity: 0.5;
+  }
+}
+
+/* Envelope wrapper */
+.envelope-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+  animation: envelopeEntrance 1.2s cubic-bezier(0.23, 1, 0.32, 1) 0.3s both;
+}
+@keyframes envelopeEntrance {
+  from {
+    opacity: 0;
+    transform: translateY(40px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.env-above-text {
+  font-family: "Cinzel", serif;
+  font-size: clamp(0.55rem, 1.5vw, 0.72rem);
+  letter-spacing: 7px;
+  color: var(--gold);
+  opacity: 0.65;
+  text-transform: uppercase;
+  text-align: center;
+}
+.env-below-text {
+  font-family: "Cormorant Garamond", serif;
+  font-size: clamp(0.85rem, 2vw, 1rem);
+  font-style: italic;
+  color: var(--gold-pale);
+  opacity: 0.55;
+  text-align: center;
+  animation: subtlePulse 2.5s ease-in-out infinite alternate;
+}
+@keyframes subtlePulse {
+  from {
+    opacity: 0.4;
+  }
+  to {
+    opacity: 0.75;
+  }
+}
+
+/* ---- THE ENVELOPE ---- */
+.envelope {
+  position: relative;
+  width: clamp(300px, 55vw, 540px);
+  height: clamp(200px, 37vw, 360px);
+  filter: drop-shadow(0 30px 60px rgba(0, 0, 0, 0.5))
+    drop-shadow(0 0 40px rgba(201, 168, 76, 0.15));
+}
+
+/* Back of envelope */
+.env-back {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(160deg, #5c1020 0%, #3a0c15 60%, #2a0810 100%);
+  border: 1.5px solid rgba(201, 168, 76, 0.3);
+  border-radius: 3px;
+}
+
+/* Side triangles (envelope edges) */
+.env-tri {
+  position: absolute;
+  width: 0;
+  height: 0;
+}
+.env-tri-left {
+  left: 0;
+  bottom: 0;
+  border-style: solid;
+  border-width: 0 0 clamp(100px, 18.5vw, 180px) clamp(150px, 27.5vw, 270px);
+  border-color: transparent transparent #4a1020 transparent;
+  opacity: 0.85;
+}
+.env-tri-right {
+  right: 0;
+  bottom: 0;
+  border-style: solid;
+  border-width: clamp(100px, 18.5vw, 180px) 0 0 clamp(150px, 27.5vw, 270px);
+  border-color: transparent transparent transparent #55121e;
+  opacity: 0.85;
+}
+.env-tri-bottom {
+  bottom: 0;
+  left: 0;
+  right: 0;
+  position: absolute;
+  width: 100%;
+  height: 0;
+  border-style: solid;
+  border-width: 0 0 0 0; /* handled via clip path instead */
+}
+
+/* Envelope V-line at bottom center */
+.env-back::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(
+    to right,
+    transparent,
+    rgba(201, 168, 76, 0.4),
+    transparent
+  );
+}
+
+/* Diamond line pattern on envelope back */
+.env-back::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  opacity: 0.06;
+  background-image:
+    repeating-linear-gradient(
+      45deg,
+      var(--gold) 0,
+      var(--gold) 1px,
+      transparent 1px,
+      transparent 20px
+    ),
+    repeating-linear-gradient(
+      -45deg,
+      var(--gold) 0,
+      var(--gold) 1px,
+      transparent 1px,
+      transparent 20px
+    );
+  border-radius: 3px;
+}
+
+/* Invite card inside the envelope */
+.env-invite-card {
+  position: absolute;
+  left: 8%;
+  right: 8%;
+  top: 12%;
+  bottom: 10%;
+  background: linear-gradient(160deg, #faf0d8 0%, #f0e0b0 40%, #e8d098 100%);
+  border: 1px solid rgba(201, 168, 76, 0.6);
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 2px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+  transition:
+    transform 1s cubic-bezier(0.23, 1, 0.32, 1),
+    opacity 0.8s ease;
+  overflow: hidden;
+}
+.env-invite-card::before {
+  content: "";
+  position: absolute;
+  inset: 6px;
+  border: 0.75px solid rgba(139, 96, 50, 0.4);
+  pointer-events: none;
+}
+.env-invite-card.slide-out {
+  transform: translateY(-90%) scale(0.95);
+  opacity: 0;
+}
+.env-card-inner {
+  text-align: center;
+  padding: 16px 24px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+}
+.env-card-ornament {
+  color: #8b5e2a;
+  font-size: 0.8rem;
+  opacity: 0.7;
+}
+.env-card-label {
+  font-family: "Cormorant Garamond", serif;
+  font-style: italic;
+  font-size: clamp(0.65rem, 1.6vw, 0.85rem);
+  color: #7a5020;
+  letter-spacing: 2px;
+  opacity: 0.8;
+}
+.env-card-name {
+  font-family: "Cinzel Decorative", serif;
+  font-size: clamp(0.85rem, 2.2vw, 1.3rem);
+  color: #5a2e08;
+  font-weight: 400;
+  line-height: 1.3;
+  letter-spacing: 1px;
+}
+.env-card-divider {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 2px 0;
+}
+.env-card-divider::before,
+.env-card-divider::after {
+  content: "✦";
+  color: #9a7030;
+  font-size: 0.45rem;
+}
+.env-card-divider span {
+  width: clamp(24px, 5vw, 50px);
+  height: 1px;
+  background: linear-gradient(to right, transparent, #9a7030, transparent);
+}
+.env-card-date {
+  font-family: "Cinzel", serif;
+  font-size: clamp(0.55rem, 1.3vw, 0.7rem);
+  letter-spacing: 4px;
+  color: #6a3810;
+  text-transform: uppercase;
+}
+.env-card-venue {
+  font-family: "Cormorant Garamond", serif;
+  font-size: clamp(0.6rem, 1.5vw, 0.78rem);
+  color: #7a4a18;
+  opacity: 0.75;
+  letter-spacing: 1px;
+}
+
+/* ---- TOP FLAP ---- */
+.env-flap {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 55%;
+  transform-origin: top center;
+  transform: rotateX(0deg);
+  transition: transform 0.8s cubic-bezier(0.23, 1, 0.32, 1);
+  z-index: 10;
+  background: linear-gradient(170deg, #5c1020 0%, #3d0c15 70%, #2e0a12 100%);
+  clip-path: polygon(0 0, 100% 0, 50% 100%);
+  border-right: 1.5px solid rgba(201, 168, 76, 0.2);
+  border-left: 1.5px solid rgba(201, 168, 76, 0.2);
+  border-top: 1.5px solid rgba(201, 168, 76, 0.3);
+  transform-style: preserve-3d;
+  perspective: 800px;
+}
+.env-flap.open {
+  transform: perspective(800px) rotateX(-160deg);
+}
+.env-flap-inner {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: 30%;
+  justify-content: center;
+  padding-top: 14%;
+}
+.env-flap-diamond {
+  width: 18px;
+  height: 18px;
+  border: 1.5px solid rgba(201, 168, 76, 0.5);
+  transform: rotate(45deg);
+  opacity: 0.6;
+}
+.env-flap-diamond::after {
+  content: "";
+  position: absolute;
+  inset: 3px;
+  border: 1px solid rgba(201, 168, 76, 0.3);
+  transform: rotate(0deg);
+}
+
+/* ---- WAX SEAL BUTTON ---- */
+#envelope-seal-btn {
+  position: absolute;
+  bottom: -22px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 35%, #b8242c, #6e0e14 55%, #3a060c);
+  border: none;
+  cursor: pointer;
+  z-index: 20;
+  padding: 0;
+  transition:
+    transform 0.3s ease,
+    box-shadow 0.3s ease;
+  box-shadow:
+    0 6px 24px rgba(0, 0, 0, 0.5),
+    0 0 0 3px rgba(201, 168, 76, 0.5),
+    0 0 20px rgba(180, 30, 40, 0.4),
+    inset 0 1px 3px rgba(255, 200, 150, 0.2);
+}
+#envelope-seal-btn:hover:not(:disabled) {
+  transform: translateX(-50%) scale(1.1);
+  box-shadow:
+    0 10px 32px rgba(0, 0, 0, 0.5),
+    0 0 0 3px rgba(201, 168, 76, 0.7),
+    0 0 40px rgba(201, 168, 76, 0.35),
+    inset 0 1px 3px rgba(255, 200, 150, 0.3);
+}
+#envelope-seal-btn:disabled {
+  cursor: default;
+}
+
+.seal-ring {
+  position: absolute;
+  inset: 5px;
+  border-radius: 50%;
+  border: 1px solid rgba(201, 168, 76, 0.45);
+}
+.seal-ring::before {
+  content: "";
+  position: absolute;
+  inset: 4px;
+  border-radius: 50%;
+  border: 0.75px solid rgba(201, 168, 76, 0.25);
+}
+
+.seal-inner {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1px;
+}
+.seal-monogram {
+  font-family: "Cinzel Decorative", serif;
+  font-size: 0.8rem;
+  color: var(--gold-light);
+  font-weight: 700;
+  line-height: 1;
+  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.5);
+}
+.seal-text {
+  font-family: "Cinzel", serif;
+  font-size: 0.38rem;
+  letter-spacing: 2.5px;
+  color: var(--gold-pale);
+  opacity: 0.75;
+  text-transform: uppercase;
+}
+
+.seal-glow {
+  position: absolute;
+  inset: -4px;
+  border-radius: 50%;
+  background: transparent;
+  box-shadow: 0 0 15px rgba(201, 168, 76, 0.25);
+  animation: sealPulse 2s ease-in-out infinite;
+  pointer-events: none;
+}
+@keyframes sealPulse {
+  0%,
+  100% {
+    box-shadow:
+      0 0 12px rgba(201, 168, 76, 0.2),
+      0 0 0 0 rgba(201, 168, 76, 0.15);
+  }
+  50% {
+    box-shadow:
+      0 0 25px rgba(201, 168, 76, 0.4),
+      0 0 0 8px rgba(201, 168, 76, 0);
+  }
 }
 
 /* ===================== INTRO OVERLAY ===================== */
@@ -38,9 +527,17 @@ body {
   align-items: center;
   justify-content: center;
   overflow: hidden;
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
   transition:
     opacity 1.2s ease,
     visibility 1.2s ease;
+}
+#intro.visible-intro {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
 }
 #intro.fade-out {
   opacity: 0;
@@ -48,7 +545,6 @@ body {
   pointer-events: none;
 }
 
-/* Gold damask pattern overlay */
 .intro-pattern {
   position: absolute;
   inset: 0;
@@ -76,7 +572,6 @@ body {
   }
 }
 
-/* Diagonal light streak */
 .light-streak {
   position: absolute;
   width: 3px;
@@ -132,7 +627,6 @@ body {
   }
 }
 
-/* SVG flight path canvas */
 #flight-canvas {
   position: absolute;
   inset: 0;
@@ -141,7 +635,6 @@ body {
   pointer-events: none;
 }
 
-/* Passport stamps */
 .stamp {
   position: absolute;
   width: 90px;
@@ -196,7 +689,6 @@ body {
   transform: rotate(-8deg) scale(1);
 }
 
-/* Sparkles */
 .sparkle {
   position: absolute;
   width: 4px;
@@ -218,7 +710,6 @@ body {
   }
 }
 
-/* Intro center text */
 .intro-text {
   position: absolute;
   bottom: 12%;
@@ -227,6 +718,10 @@ body {
   text-align: center;
   opacity: 0;
   animation: fadeUp 1s ease 3.5s forwards;
+  /* only play when intro is visible */
+}
+#intro.visible-intro .intro-text {
+  animation-play-state: running;
 }
 .intro-text h1 {
   font-family: "Cinzel Decorative", serif;
@@ -254,7 +749,6 @@ body {
   }
 }
 
-/* Gold border corners on intro */
 .corner {
   position: absolute;
   width: 60px;
@@ -311,8 +805,6 @@ body {
   overflow: hidden;
   padding: 100px 20px 80px;
 }
-
-/* Ornamental background */
 .hero::before {
   content: "";
   position: absolute;
@@ -406,7 +898,6 @@ body {
   opacity: 0.5;
 }
 
-/* Small orbiting stars around photo */
 .orbit-dot {
   position: absolute;
   width: 8px;
@@ -443,7 +934,6 @@ body {
   position: relative;
   z-index: 2;
 }
-
 .debutant-age {
   font-family: "Cinzel", serif;
   font-size: 0.7rem;
@@ -453,7 +943,6 @@ body {
   text-transform: uppercase;
   margin-bottom: 12px;
 }
-
 .debutant-name {
   font-family: "Cinzel Decorative", serif;
   font-size: clamp(2.2rem, 6vw, 4.5rem);
@@ -466,7 +955,6 @@ body {
   margin-bottom: 12px;
   letter-spacing: 2px;
 }
-
 .debutant-tagline {
   font-family: "Cormorant Garamond", serif;
   font-size: clamp(1.1rem, 2.5vw, 1.6rem);
@@ -476,7 +964,6 @@ body {
   letter-spacing: 2px;
   margin-bottom: 30px;
 }
-
 .gold-divider {
   display: flex;
   align-items: center;
@@ -496,7 +983,6 @@ body {
   color: var(--gold);
   font-size: 0.6rem;
 }
-
 .hero-date {
   font-family: "Cinzel", serif;
   font-size: 0.8rem;
@@ -543,17 +1029,14 @@ body {
   }
 }
 
-/* ---- SECTION BASE ---- */
 section {
   position: relative;
 }
-
 .section-inner {
   max-width: 900px;
   margin: 0 auto;
   padding: 80px 30px;
 }
-
 .section-label {
   font-family: "Cinzel", serif;
   font-size: 0.6rem;
@@ -564,7 +1047,6 @@ section {
   opacity: 0.7;
   margin-bottom: 10px;
 }
-
 .section-title {
   font-family: "Cinzel Decorative", serif;
   font-size: clamp(1.4rem, 3.5vw, 2.2rem);
@@ -592,7 +1074,6 @@ section {
     repeat;
   pointer-events: none;
 }
-
 .details-card {
   background: linear-gradient(
     135deg,
@@ -624,14 +1105,12 @@ section {
   height: 2px;
   background: linear-gradient(to right, transparent, var(--gold), transparent);
 }
-
 .detail-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
   gap: 40px;
   margin-top: 40px;
 }
-
 .detail-item {
   text-align: center;
 }
@@ -675,7 +1154,6 @@ section {
 .about-section {
   background: var(--burgundy-dark);
 }
-
 .about-grid {
   display: grid;
   grid-template-columns: 1fr 1.6fr;
@@ -692,7 +1170,6 @@ section {
     margin: 0 auto;
   }
 }
-
 .about-photo-wrap {
   position: relative;
 }
@@ -746,9 +1223,6 @@ section {
   letter-spacing: 2px;
   gap: 8px;
 }
-
-.about-text {
-}
 .about-quote {
   font-family: "Cormorant Garamond", serif;
   font-size: clamp(1.4rem, 3vw, 2rem);
@@ -777,7 +1251,6 @@ section {
     var(--burgundy-dark)
   );
 }
-
 .gallery-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
@@ -789,7 +1262,6 @@ section {
     grid-template-columns: repeat(2, 1fr);
   }
 }
-
 .gallery-item {
   position: relative;
   aspect-ratio: 1;
@@ -836,28 +1308,20 @@ section {
 .gallery-overlay {
   position: absolute;
   inset: 0;
-  background: rgba(74, 15, 28, 0.6);
-  display: flex;
-  align-items: center;
-  justify-content: center;
   opacity: 0;
   transition: opacity 0.4s ease;
 }
-.gallery-overlay span {
-  font-family: "Cinzel", serif;
-  font-size: 0.6rem;
-  letter-spacing: 4px;
-  color: var(--gold);
-  text-transform: uppercase;
-  border: 1px solid rgba(201, 168, 76, 0.5);
-  padding: 8px 16px;
+.gallery-overlay img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
 }
 
 /* ---- PROGRAM / TIMELINE ---- */
 .program-section {
   background: var(--burgundy-dark);
 }
-
 .timeline {
   position: relative;
   margin-top: 40px;
@@ -878,7 +1342,6 @@ section {
     left: 20px;
   }
 }
-
 .timeline-item {
   display: grid;
   grid-template-columns: 1fr 40px 1fr;
@@ -902,7 +1365,6 @@ section {
     grid-column: 2;
   }
 }
-
 .timeline-left {
   text-align: right;
   padding-right: 24px;
@@ -933,7 +1395,6 @@ section {
   border-radius: 50%;
   border: 1px solid rgba(201, 168, 76, 0.3);
 }
-
 .timeline-time {
   font-family: "Cinzel", serif;
   font-size: 0.65rem;
@@ -956,8 +1417,6 @@ section {
   opacity: 0.55;
   line-height: 1.6;
 }
-
-/* Alternating */
 .timeline-item:nth-child(even) .timeline-left {
   order: 3;
   text-align: left;
@@ -1112,11 +1571,13 @@ footer p {
   opacity: 1;
   transform: translateY(0);
 }
+
+/* ---- MISC FIXES ---- */
 .hero-photo-placeholder img {
   width: 100%;
   height: 100%;
-  object-fit: cover; /* makes image fit perfectly */
-  border-radius: 50%; /* keeps circle shape */
+  object-fit: cover;
+  border-radius: 50%;
   display: block;
 }
 .color-motif {
@@ -1125,7 +1586,6 @@ footer p {
   gap: 10px;
   margin-top: 8px;
 }
-
 .color-dot {
   width: 14px;
   height: 14px;
@@ -1133,42 +1593,21 @@ footer p {
   border: 1px solid rgba(255, 255, 255, 0.3);
   box-shadow: 0 0 6px rgba(0, 0, 0, 0.25);
 }
-
-/* colors */
 .color-dot.burgundy {
-  background: var(--burgundy);
+  background: #f2efe8;
 }
-
 .color-dot.gold {
-  background: var(--gold);
+  background: #d7cec5;
 }
-
 .color-dot.black {
-  background: #000;
+  background: #d3b698;
 }
-
 .color-dot.red {
-  background: #c62828;
+  background: #ae8e7f;
 }
 
-.color-dot.blue {
-  background: #1565c0;
-}
 .about-photo {
   width: 100%;
   height: 100%;
   object-fit: cover;
-}
-.gallery-overlay {
-  position: absolute;
-  inset: 0;
-  opacity: 0;
-  transition: opacity 0.4s ease;
-}
-
-.gallery-overlay img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover; /* IMPORTANT: makes image fit */
-  display: block;
 }

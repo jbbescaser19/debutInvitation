@@ -1,3 +1,5 @@
+history.scrollRestoration = "manual";
+window.scrollTo(0, 0);
 /* ===== SPARKLES ===== */
 function createSparkles() {
   const container = document.getElementById("sparkle-container");
@@ -21,27 +23,24 @@ createSparkles();
 function animateAirplane() {
   const group = document.getElementById("airplane-group");
   const path = document.getElementById("flight-path");
-
-  // Get path length
   const length = path.getTotalLength();
   let startTime = null;
-  const duration = 4000; // ms
+  const duration = 4000;
   const delay = 600;
 
   setTimeout(() => {
     group.style.opacity = "1";
+
     function step(ts) {
       if (!startTime) startTime = ts;
       const elapsed = ts - startTime;
       const progress = Math.min(elapsed / duration, 1);
-
       const eased =
         progress < 0.5
           ? 2 * progress * progress
           : -1 + (4 - 2 * progress) * progress;
-      const pt = path.getPointAtLength(eased * length);
 
-      // Calculate angle from tangent
+      const pt = path.getPointAtLength(eased * length);
       const ptAhead = path.getPointAtLength(
         Math.min((eased + 0.01) * length, length),
       );
@@ -59,58 +58,115 @@ function animateAirplane() {
     requestAnimationFrame(step);
   }, delay);
 }
-animateAirplane();
 
 /* ===== STAMPS ===== */
-setTimeout(() => {
-  document.getElementById("stamp1").classList.add("show");
-}, 800);
-setTimeout(() => {
-  document.getElementById("stamp2").classList.add("show");
-}, 1600);
-setTimeout(() => {
-  document.getElementById("stamp3").classList.add("show");
-}, 2400);
+function showStamps() {
+  setTimeout(
+    () => document.getElementById("stamp1").classList.add("show"),
+    800,
+  );
+  setTimeout(
+    () => document.getElementById("stamp2").classList.add("show"),
+    1600,
+  );
+  setTimeout(
+    () => document.getElementById("stamp3").classList.add("show"),
+    2400,
+  );
+}
 
-/* ===== INTRO → MAIN TRANSITION ===== */
-setTimeout(() => {
-  const intro = document.getElementById("intro");
-  const main = document.getElementById("main-page");
-  intro.classList.add("fade-out");
-  main.classList.add("visible");
+/* ===== MUSIC ===== */
+const music = document.getElementById("bg-music");
+let musicState = 0; // 0 = stopped, 1 = playing, 2 = muted
 
-  // Trigger hero fade-ins
-  document.querySelectorAll(".hero .fade-in").forEach((el, i) => {
-    setTimeout(() => el.classList.add("visible"), 200 + i * 150);
-  });
-
-  // Start music
-  const music = document.getElementById("bg-music");
-
-  // autoplay allowed only if muted
-  music.muted = true;
-  music.play().catch(() => {});
-
-  // try to unmute after intro
-  setTimeout(() => {
-    music.muted = false;
-
-    // fade in volume
-    let vol = 0;
-    music.volume = 0;
-
-    const fadeIn = setInterval(() => {
-      vol = Math.min(vol + 0.02, 0.35);
-      music.volume = vol;
-      if (vol >= 0.35) clearInterval(fadeIn);
-    }, 150);
-  }, 10);
-  const fadeIn = setInterval(() => {
+function fadeMusicIn(m) {
+  let vol = 0;
+  m.volume = 0;
+  m.muted = false;
+  const fade = setInterval(() => {
     vol = Math.min(vol + 0.02, 0.35);
-    music.volume = vol;
-    if (vol >= 0.35) clearInterval(fadeIn);
+    m.volume = vol;
+    if (vol >= 0.35) clearInterval(fade);
   }, 150);
-}, 5800);
+}
+
+function toggleMusic() {
+  const btn = document.getElementById("music-btn");
+  if (musicState === 0) {
+    music
+      .play()
+      .then(() => fadeMusicIn(music))
+      .catch(() => {});
+    musicState = 1;
+    btn.textContent = "♪";
+    btn.title = "Mute Music";
+    btn.classList.remove("muted");
+  } else if (musicState === 1) {
+    music.muted = true;
+    musicState = 2;
+    btn.textContent = "♪̶";
+    btn.title = "Unmute Music";
+    btn.classList.add("muted");
+  } else {
+    music.muted = false;
+    fadeMusicIn(music);
+    musicState = 1;
+    btn.textContent = "♪";
+    btn.title = "Mute Music";
+    btn.classList.remove("muted");
+  }
+}
+
+/* ===== ENVELOPE OPEN → AIRPLANE TRANSITION ===== */
+function openEnvelope() {
+  const btn = document.getElementById("envelope-seal-btn");
+  btn.disabled = true;
+  setTimeout(() => {
+    music
+      .play()
+      .then(() => fadeMusicIn(music))
+      .catch(() => {});
+    musicState = 1;
+    document.getElementById("music-btn").textContent = "♪";
+    document.getElementById("music-btn").classList.remove("muted");
+  }, 4000);
+
+  // Animate envelope opening
+  const envelope = document.getElementById("envelope-screen");
+  const flap = document.querySelector(".env-flap");
+  const card = document.querySelector(".env-invite-card");
+
+  // Step 1: flip flap open
+  flap.classList.add("open");
+
+  // Step 2: slide card up out of envelope
+  setTimeout(() => {
+    card.classList.add("slide-out");
+  }, 700);
+
+  // Step 3: fade out envelope, show intro/airplane screen
+  setTimeout(() => {
+    envelope.classList.add("fade-out");
+    const intro = document.getElementById("intro");
+    intro.classList.add("visible-intro");
+
+    // Start airplane + stamps
+    animateAirplane();
+    showStamps();
+  }, 1600);
+
+  // Step 4: After airplane animation, transition to main
+  setTimeout(() => {
+    const intro = document.getElementById("intro");
+    const main = document.getElementById("main-page");
+    intro.classList.add("fade-out");
+    main.classList.add("visible");
+
+    document.querySelectorAll(".hero .fade-in").forEach((el, i) => {
+      setTimeout(() => el.classList.add("visible"), 200 + i * 150);
+    });
+  }, 7400); // 1600ms envelope fade + 5800ms airplane
+}
 
 /* ===== SCROLL FADE-IN ===== */
 const observer = new IntersectionObserver(
@@ -128,15 +184,3 @@ const observer = new IntersectionObserver(
 document
   .querySelectorAll(".fade-in:not(.hero .fade-in)")
   .forEach((el) => observer.observe(el));
-
-/* ===== MUSIC TOGGLE ===== */
-let musicMuted = false;
-function toggleMusic() {
-  const music = document.getElementById("bg-music");
-  const btn = document.getElementById("music-btn");
-  musicMuted = !musicMuted;
-  music.muted = musicMuted;
-  btn.textContent = musicMuted ? "♪̶" : "♪";
-  btn.classList.toggle("muted", musicMuted);
-  btn.title = musicMuted ? "Unmute Music" : "Mute Music";
-}

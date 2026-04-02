@@ -9,10 +9,85 @@
       href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Cinzel+Decorative:wght@400;700&family=Cinzel:wght@400;600&family=Raleway:wght@300;400;500&display=swap"
       rel="stylesheet"
     />
-<link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="styles.css" />
+    <script>
+      history.scrollRestoration = "manual";
+      window.scrollTo(0, 0);
+    </script>
   </head>
   <body>
-    <!-- =================== INTRO ANIMATION =================== -->
+    <!-- =================== ENVELOPE SCREEN (1ST PAGE) =================== -->
+    <div id="envelope-screen">
+      <!-- Background particles -->
+      <div class="env-bg-pattern"></div>
+      <div class="env-particles" id="env-particles"></div>
+
+      <!-- Corner ornaments -->
+      <div class="env-corner tl"></div>
+      <div class="env-corner tr"></div>
+      <div class="env-corner bl"></div>
+      <div class="env-corner br"></div>
+
+      <!-- The Envelope -->
+      <div class="envelope-wrap">
+        <!-- Floating decorative text above -->
+        <p class="env-above-text">You are cordially invited</p>
+
+        <!-- Envelope body -->
+        <div class="envelope">
+          <!-- Back flap (behind) -->
+          <div class="env-back"></div>
+
+          <!-- Left & right triangles of envelope front -->
+          <div class="env-tri env-tri-left"></div>
+          <div class="env-tri env-tri-right"></div>
+          <div class="env-tri env-tri-bottom"></div>
+
+          <!-- Invite card inside (peeks out when flap opens) -->
+          <div class="env-invite-card">
+            <div class="env-card-inner">
+              <div class="env-card-ornament">✦</div>
+              <p class="env-card-label">An Unforgettable Evening</p>
+              <h2 class="env-card-name">Sophia Khate<br />R. Arganda</h2>
+              <div class="env-card-divider"><span></span></div>
+              <p class="env-card-date">May 23, 2026</p>
+              <p class="env-card-venue">Casa Buena · Private resort</p>
+              <div class="env-card-ornament">✦</div>
+            </div>
+          </div>
+
+          <!-- Top flap (flips open) -->
+          <div class="env-flap">
+            <!-- Diamond pattern on flap -->
+            <div class="env-flap-inner">
+              <div class="env-flap-diamond"></div>
+            </div>
+          </div>
+
+          <!-- Wax seal button -->
+          <button
+            id="envelope-seal-btn"
+            onclick="openEnvelope()"
+            title="Open your invitation"
+          >
+            <div class="seal-ring"></div>
+            <div class="seal-inner">
+              <span class="seal-monogram">SK</span>
+              <span class="seal-text">Open</span>
+            </div>
+            <div class="seal-glow"></div>
+          </button>
+        </div>
+        <!-- /envelope -->
+
+        <!-- Below text -->
+        <p class="env-below-text">Click the seal to open your invitation</p>
+      </div>
+      <!-- /envelope-wrap -->
+    </div>
+    <!-- /envelope-screen -->
+
+    <!-- =================== INTRO ANIMATION (2ND) =================== -->
     <div id="intro">
       <div class="intro-pattern"></div>
       <div class="light-streak"></div>
@@ -62,7 +137,6 @@
             </feMerge>
           </filter>
         </defs>
-        <!-- Dashed flight path -->
         <path
           id="flight-path"
           d="M -100 600 Q 360 400 720 300 Q 1080 200 1540 120"
@@ -77,11 +151,11 @@
             from="1000"
             to="0"
             dur="4s"
-            begin="0.5s"
+            begin="indefinite"
             fill="freeze"
+            id="path-anim"
           />
         </path>
-        <!-- Glow trail -->
         <path
           id="trail"
           d="M -100 600 Q 360 400 720 300 Q 1080 200 1540 120"
@@ -90,23 +164,17 @@
           stroke-width="6"
           filter="url(#glow)"
         />
-        <!-- Airplane group -->
         <g id="airplane-group" filter="url(#glow)" opacity="0">
           <g id="airplane" transform="translate(0,0) rotate(-18)">
-            <!-- Body -->
             <ellipse cx="0" cy="0" rx="18" ry="5" fill="#C9A84C" />
-            <!-- Wings -->
             <polygon points="0,-4 -12,8 12,8" fill="#E8C86A" opacity="0.9" />
             <polygon points="0,2 -8,-10 8,-10" fill="#E8C86A" opacity="0.7" />
-            <!-- Tail -->
             <polygon points="14,0 22,-6 22,6" fill="#C9A84C" opacity="0.8" />
-            <!-- Glow center -->
             <circle cx="-16" cy="0" r="4" fill="rgba(255,240,180,0.8)" />
           </g>
         </g>
       </svg>
 
-      <!-- Sparkles scattered -->
       <div id="sparkle-container"></div>
 
       <div class="intro-text">
@@ -117,16 +185,10 @@
 
     <!-- =================== MAIN PAGE =================== -->
     <div id="main-page">
-      <!-- MUSIC -->
       <audio id="bg-music" loop>
-        <!-- Using a royalty-free piano melody via a public URL -->
-        <source
-          src="music/bts.mp3"
-          type="audio/mpeg"
-        />
+        <source src="music/bts.mp3" type="audio/mpeg" />
       </audio>
 
-      <!-- Music Button -->
       <button id="music-btn" title="Toggle Music" onclick="toggleMusic()">
         ♪
       </button>
@@ -134,34 +196,35 @@
       <!-- ===== HERO ===== -->
       <section class="hero">
         <div class="hero-photo-wrap fade-in">
-         <div class="hero-photo-ring">
-  <img src="pictures/khate.jpg" alt="" class="hero-photo" />
-  <div class="orbit-dot"></div>
-  <div class="orbit-dot"></div>
-  <div class="orbit-dot"></div>
-</div>
-
-        <div class="hero-content">
-          <p class="debutant-age fade-in" style="transition-delay: 0.2s">
-            Celebrating Eighteen Years
-          </p>
-          <h1 class="debutant-name fade-in" style="transition-delay: 0.35s">
-            Sophia Khate R.<br />Arganda
-          </h1>
-          <div class="gold-divider fade-in" style="transition-delay: 0.5s">
-            <span></span>
+          <div class="hero-photo-ring">
+            <img src="pictures/khate.jpg" alt="" class="hero-photo" />
+            <div class="orbit-dot"></div>
+            <div class="orbit-dot"></div>
+            <div class="orbit-dot"></div>
           </div>
-          <p class="debutant-tagline fade-in" style="transition-delay: 0.65s">
-            "A Night to Remember"
-          </p>
-          <p class="hero-date fade-in" style="transition-delay: 0.8s">
-            December 14, 2025 · Grand Ballroom, Manila
-          </p>
-        </div>
 
-        <div class="scroll-indicator">
-          <span>Scroll</span>
-          <div class="scroll-arrow"></div>
+          <div class="hero-content">
+            <p class="debutant-age fade-in" style="transition-delay: 0.2s">
+              Celebrating Eighteen Years
+            </p>
+            <h1 class="debutant-name fade-in" style="transition-delay: 0.35s">
+              Sophia Khate Roque.<br />Arganda
+            </h1>
+            <div class="gold-divider fade-in" style="transition-delay: 0.5s">
+              <span></span>
+            </div>
+            <p class="debutant-tagline fade-in" style="transition-delay: 0.65s">
+              An Unforgettable Evening
+            </p>
+            <p class="hero-date fade-in" style="transition-delay: 0.8s">
+              May 23, 2026 · Casa Buena, Private resort
+            </p>
+          </div>
+
+          <div class="scroll-indicator">
+            <span>Scroll</span>
+            <div class="scroll-arrow"></div>
+          </div>
         </div>
       </section>
 
@@ -171,13 +234,14 @@
           <p class="section-label fade-in">The Invitation</p>
           <h2 class="section-title fade-in">Event Details</h2>
           <div class="gold-divider fade-in"><span></span></div>
-
           <div class="details-card fade-in">
             <div class="detail-grid">
               <div class="detail-item">
                 <div class="detail-icon">✦</div>
                 <p class="detail-label">Debutant</p>
-                <p class="detail-value"><strong>Sophia Khate R. Arganda</strong></p>
+                <p class="detail-value">
+                  <strong>Sophia Khate R. Arganda</strong>
+                </p>
               </div>
               <div class="detail-item">
                 <div class="detail-icon">📅</div>
@@ -190,35 +254,34 @@
                 <div class="detail-icon">🕖</div>
                 <p class="detail-label">Time</p>
                 <p class="detail-value">
-                  <strong>6:30 PM</strong>Doors open at 6:00 PM
+                  <strong>6:00 PM</strong>Doors open at 5:00 PM
                 </p>
               </div>
               <div class="detail-item">
                 <div class="detail-icon">🏛</div>
                 <p class="detail-label">Venue</p>
                 <p class="detail-value">
-                  <strong>The Grand Ballroom</strong>Manila Hotel, Manila
+                  <strong>Exclusive Private Resort</strong>Casa Buena
                 </p>
               </div>
               <div class="detail-item">
-                <div class="detail-icon">👗</div>
+                <div class="detail-icon">🤵🏻</div>
                 <p class="detail-label">Attire</p>
                 <p class="detail-value">
-                  <strong>Formal / Black Tie</strong>
-  <span class="color-motif">
-    <span class="color-dot burgundy"></span>
-    <span class="color-dot gold"></span>
-    <span class="color-dot black"></span>
-    <span class="color-dot red"></span>
-    <span class="color-dot blue"></span>
-  </span>
+                  <strong>Formal</strong>
+                  <span class="color-motif">
+                    <span class="color-dot burgundy"></span>
+                    <span class="color-dot gold"></span>
+                    <span class="color-dot black"></span>
+                    <span class="color-dot red"></span>
+                  </span>
+                </p>
               </div>
               <div class="detail-item">
                 <div class="detail-icon">🌹</div>
                 <p class="detail-label">Host</p>
                 <p class="detail-value">
-                  <strong>The Arganda Family</strong>Together with friends &
-                  family
+                  <strong>Francis Argana</strong>Together with friends & family
                 </p>
               </div>
             </div>
@@ -232,13 +295,15 @@
           <p class="section-label fade-in">A Letter to Our Guests</p>
           <h2 class="section-title fade-in">About the Debutant</h2>
           <div class="gold-divider fade-in"><span></span></div>
-
           <div class="about-grid">
             <div class="about-photo-wrap fade-in">
               <div class="about-photo-frame">
-                <!-- <img src="your-portrait.jpg" alt="Sofia Marie Portrait" class="about-photo"> -->
                 <div class="about-photo-placeholder">
-                 <img src="pictures/khate1.jpg" alt="Sofia Marie Portrait" class="about-photo">
+                  <img
+                    src="pictures/khate1.jpg"
+                    alt="Sofia Marie Portrait"
+                    class="about-photo"
+                  />
                 </div>
               </div>
             </div>
@@ -248,16 +313,16 @@
                 with a heart full of love."
               </p>
               <p class="about-body">
-               Sophia Khate R. Arganda turns eighteen this December — and what better
-                way to celebrate this milestone than surrounded by the people
-                who have shaped her story. Graceful, kind, and full of wonder,
-                Sofia has grown into a young woman whose warmth lights up every
-                room she enters.
+                Sofia Khate R. Arganda celebrates her eighteenth birthday this
+                May — and it would be our honor to have you join us in
+                celebrating this remarkable milestone. Graceful, kind, and full
+                of wonder, Sofia has grown into a young woman whose warmth
+                illuminates every space she enters.
                 <br /><br />
-                This evening is a celebration not just of her birthday, but of
-                every chapter, every lesson, and every beautiful moment that has
-                brought her to this night. We are so honored to have you witness
-                the beginning of her next great adventure.
+                This evening is a tribute not only to her birthday, but to every
+                cherished moment and memory that has brought her to this special
+                night. We warmly invite you to witness the beginning of her next
+                wonderful chapter.
               </p>
             </div>
           </div>
@@ -270,31 +335,42 @@
           <p class="section-label fade-in">A Walk Through the Years</p>
           <h2 class="section-title fade-in">Photo Gallery</h2>
           <div class="gold-divider fade-in"><span></span></div>
-
           <div class="gallery-grid fade-in">
             <div class="gallery-item" style="--angle: 135deg">
               <div class="gallery-placeholder">🌸</div>
-              <div class="gallery-overlay"><img src="pictures/khate2.jpg" alt=""></div>
+              <div class="gallery-overlay">
+                <img src="pictures/khate2.jpg" alt="" />
+              </div>
             </div>
             <div class="gallery-item" style="--angle: 160deg">
               <div class="gallery-placeholder">✨</div>
-              <div class="gallery-overlay"><img src="pictures/khate3.jpg" alt=""></div>
+              <div class="gallery-overlay">
+                <img src="pictures/khate3.jpg" alt="" />
+              </div>
             </div>
             <div class="gallery-item" style="--angle: 120deg">
               <div class="gallery-placeholder">🌹</div>
-              <div class="gallery-overlay"><img src="pictures/khate4.jpg" alt=""></div>
+              <div class="gallery-overlay">
+                <img src="pictures/khate4.jpg" alt="" />
+              </div>
             </div>
             <div class="gallery-item" style="--angle: 145deg">
               <div class="gallery-placeholder">💫</div>
-              <div class="gallery-overlay"><img src="pictures/khate5.jpg" alt=""></div>
+              <div class="gallery-overlay">
+                <img src="pictures/khate5.jpg" alt="" />
+              </div>
             </div>
             <div class="gallery-item" style="--angle: 110deg">
               <div class="gallery-placeholder">🌟</div>
-              <div class="gallery-overlay"><img src="pictures/khate6.jpg" alt=""></div>
+              <div class="gallery-overlay">
+                <img src="pictures/khate6.jpg" alt="" />
+              </div>
             </div>
             <div class="gallery-item" style="--angle: 155deg">
               <div class="gallery-placeholder">🎀</div>
-              <div class="gallery-overlay"><img src="pictures/khate7.jpg" alt=""></div>
+              <div class="gallery-overlay">
+                <img src="pictures/khate7.jpg" alt="" />
+              </div>
             </div>
           </div>
         </div>
@@ -306,7 +382,6 @@
           <p class="section-label fade-in">The Evening's Journey</p>
           <h2 class="section-title fade-in">Program of Events</h2>
           <div class="gold-divider fade-in"><span></span></div>
-
           <div class="timeline fade-in">
             <div class="timeline-item">
               <div class="timeline-left">
@@ -431,7 +506,6 @@
           <p class="section-label fade-in">Find Us Here</p>
           <h2 class="section-title fade-in">Venue & Location</h2>
           <div class="gold-divider fade-in"><span></span></div>
-
           <div class="venue-card fade-in">
             <p class="venue-name">The Grand Ballroom</p>
             <p class="venue-address">
@@ -439,7 +513,10 @@
               Roxas Boulevard, Manila, Philippines<br />
               Parking available on-site
             </p>
-            <a class="map-btn" href="https://maps.app.goo.gl/ej2tC3hPg2avUHF59" target="_blank"
+            <a
+              class="map-btn"
+              href="https://maps.google.com/?q=14.174926,121.19374409999999"
+              target="_blank"
               >Get Directions</a
             >
           </div>
@@ -464,12 +541,11 @@
         <div class="footer-ornament" style="font-size: 1rem; margin: 12px 0">
           — ✦ —
         </div>
-        <p>May 23, 2026 · Manila Hotel · Grand Ballroom</p>
+        <p>May 23, 2026 · Casa Buena · Exclusive Private Resort</p>
         <p style="margin-top: 8px">Made with love by the Arganda Family</p>
       </footer>
     </div>
-    <!-- end #main-page -->
 
-   <script src="script.js"></script>
+    <script src="script.js"></script>
   </body>
 </html>
