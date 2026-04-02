@@ -104,7 +104,7 @@ setTimeout(() => {
       music.volume = vol;
       if (vol >= 0.35) clearInterval(fadeIn);
     }, 150);
-  }, 1000);
+  }, 10);
   const fadeIn = setInterval(() => {
     vol = Math.min(vol + 0.02, 0.35);
     music.volume = vol;
