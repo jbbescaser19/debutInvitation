@@ -86,9 +86,25 @@ setTimeout(() => {
 
   // Start music
   const music = document.getElementById("bg-music");
-  music.volume = 0;
+
+  // autoplay allowed only if muted
+  music.muted = true;
   music.play().catch(() => {});
-  let vol = 0;
+
+  // try to unmute after intro
+  setTimeout(() => {
+    music.muted = false;
+
+    // fade in volume
+    let vol = 0;
+    music.volume = 0;
+
+    const fadeIn = setInterval(() => {
+      vol = Math.min(vol + 0.02, 0.35);
+      music.volume = vol;
+      if (vol >= 0.35) clearInterval(fadeIn);
+    }, 150);
+  }, 1000);
   const fadeIn = setInterval(() => {
     vol = Math.min(vol + 0.02, 0.35);
     music.volume = vol;
